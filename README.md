@@ -15,6 +15,8 @@ Isolation: This ensures safety and simplicity in concurrent execution.
 
 
 _calculateFibonacci Method:
+
+
 Purpose: Starts the process to calculate a Fibonacci number using an isolate.
 Actions:
 Creates a ReceivePort to get messages.
@@ -22,6 +24,8 @@ Spawns a new isolate with Isolate.spawn(), passing the calculateFibonacci functi
 Waits for the sendPort from the isolate to communicate back.
 
 **calculateFibonacci Function (Isolate Entry):**
+
+
 Purpose: Runs within the new isolate.
 Actions:
 Creates its own ReceivePort to receive the actual data from the main app.
@@ -30,6 +34,8 @@ Communication and Calculation:
 
 
 Flow:
+
+
 The main app sends the Fibonacci number to calculate along with a sendPort.
 The isolate receives this message, performs the Fibonacci calculation, and uses the provided sendPort to send the result back.
 Updating the Main App:
