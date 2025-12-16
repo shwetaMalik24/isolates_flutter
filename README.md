@@ -11,79 +11,30 @@ Memory: Each isolate has its own memory heap, which means they cannot share data
 Communication: Isolates communicate by passing messages via ports (SendPort and ReceivePort), ensuring data stays isolated.
 Isolation: This ensures safety and simplicity in concurrent execution.
 
+**Sequence of Method Calls**
 
 
-Isolate Code Explanation
-Key Components
-Creating an Isolate:
-Spawn an Isolate: Creates a new isolate using Isolate.spawn(), passing the entry function and initial communication port.
-Example:
-dart
+_calculateFibonacci Method:
+Purpose: Starts the process to calculate a Fibonacci number using an isolate.
+Actions:
+Creates a ReceivePort to get messages.
+Spawns a new isolate with Isolate.spawn(), passing the calculateFibonacci function and sendPort.
+Waits for the sendPort from the isolate to communicate back.
 
-final receivePort = ReceivePort();
-await Isolate.spawn(calculateFibonacci, receivePort.sendPort);
-Communication Ports:
-ReceivePort: Used by an isolate to receive messages.
-SendPort: Used to send messages to another isolate.
-Example:
-dart
-
-sendPort.send(port.sendPort);
+**calculateFibonacci Function (Isolate Entry):**
+Purpose: Runs within the new isolate.
+Actions:
+Creates its own ReceivePort to receive the actual data from the main app.
+Sends its sendPort back to the main app for further communication.
+Communication and Calculation:
 
 
-Future<void> _calculateFibonacci(int n) async {
-  setState(() {
-    _isCalculating = true;
-  });
-
-  final receivePort = ReceivePort();
-
-  await Isolate.spawn(calculateFibonacci, receivePort.sendPort);
-
-  final sendPort = await receivePort.first as SendPort;
-  final answer = ReceivePort();
-  sendPort.send([n, answer.sendPort]);
-
-  final result = await answer.first;
-
-  setState(() {
-    _result = result;
-    _isCalculating = false;
-  });
-}
-
-
-
-Initialize Communication:
-ReceivePort is created to receive messages from the isolate.
-Spawn Isolate:
-Isolate.spawn starts the calculateFibonacci function in a new isolate.
-Send and Receive:
-The main isolate receives a SendPort from the new isolate, enabling communication.
-Sends the data (n for Fibonacci) and another SendPort for receiving the result.
-Retrieve Result:
-Waits for the result from the isolate and updates the UI state accordingly.
-
-
-Isolate Entry Function
-
-static void calculateFibonacci(SendPort sendPort) {
-  final port = ReceivePort();
-  sendPort.send(port.sendPort);
-
-  port.listen((message) {
-    final data = message[0] as int;
-    final replyTo = message[1] as SendPort;
-
-    replyTo.send(fibonacci(data));
-  });
-}
-
-
-Setup Port:
-The ReceivePort listens for messages, and its SendPort is sent back to the main isolate for communication.
-Listening for Tasks:
-When it receives a message, it executes the Fibonacci calculation and sends the result back using the provided SendPort.
-Benefits
-Non-blocking UI: Main thread remains free for UI updates.
-Safe Concurrency: Avoids common pitfalls associated with shared-memory concurrency.
+Flow:
+The main app sends the Fibonacci number to calculate along with a sendPort.
+The isolate receives this message, performs the Fibonacci calculation, and uses the provided sendPort to send the result back.
+Updating the Main App:
+Once the result is received from the isolate, the main app updates the UI to display the result and stop showing any loading indicators.
+**Summary of Method Actions**
+_calculateFibonacci: Sets up communication, starts the isolate, and waits for the result.
+calculateFibonacci: Listens for input, performs calculations, and sends back results.
+This order of operations allows your app to handle computational tasks without freezing the main UI. Let me know if you need more clarification!
