@@ -41,6 +41,11 @@ The isolate receives this message, performs the Fibonacci calculation, and uses 
 Updating the Main App:
 Once the result is received from the isolate, the main app updates the UI to display the result and stop showing any loading indicators.
 **Summary of Method Actions**
-_calculateFibonacci: Sets up communication, starts the isolate, and waits for the result.
-calculateFibonacci: Listens for input, performs calculations, and sends back results.
+
+
+_calculateFibonacci: 
+Sets up communication, starts the isolate, and waits for the result.
+
+calculateFibonacci: 
+Listens for input, performs calculations, and sends back results.
 This order of operations allows your app to handle computational tasks without freezing the main UI. Let me know if you need more clarification!
