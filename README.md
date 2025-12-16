@@ -3,10 +3,16 @@
 What are Isolates?
 Definition: Isolates are independent workers in Dart that do not share memory. They provide a way to perform concurrent programming without the complexities and risks of multithreading, such as race conditions.
 Use Case: Useful for executing heavy computations without blocking the main thread, thereby keeping the UI responsive.
+
+
+
 How Do Isolates Work?
 Memory: Each isolate has its own memory heap, which means they cannot share data directly.
 Communication: Isolates communicate by passing messages via ports (SendPort and ReceivePort), ensuring data stays isolated.
 Isolation: This ensures safety and simplicity in concurrent execution.
+
+
+
 Isolate Code Explanation
 Key Components
 Creating an Isolate:
@@ -23,8 +29,7 @@ Example:
 dart
 
 sendPort.send(port.sendPort);
-Code Breakdown
-dart
+
 
 Future<void> _calculateFibonacci(int n) async {
   setState(() {
@@ -46,6 +51,9 @@ Future<void> _calculateFibonacci(int n) async {
     _isCalculating = false;
   });
 }
+
+
+
 Initialize Communication:
 ReceivePort is created to receive messages from the isolate.
 Spawn Isolate:
@@ -55,8 +63,9 @@ The main isolate receives a SendPort from the new isolate, enabling communicatio
 Sends the data (n for Fibonacci) and another SendPort for receiving the result.
 Retrieve Result:
 Waits for the result from the isolate and updates the UI state accordingly.
+
+
 Isolate Entry Function
-dart
 
 static void calculateFibonacci(SendPort sendPort) {
   final port = ReceivePort();
@@ -69,6 +78,8 @@ static void calculateFibonacci(SendPort sendPort) {
     replyTo.send(fibonacci(data));
   });
 }
+
+
 Setup Port:
 The ReceivePort listens for messages, and its SendPort is sent back to the main isolate for communication.
 Listening for Tasks:
